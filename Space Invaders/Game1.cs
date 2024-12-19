@@ -8,10 +8,10 @@ namespace Space_Invaders
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        Rectangle xwingRect, window;
-        Texture2D xwingTexture;
-        Vector2 xwingSpeed;
-        KeyboardState keyboardState;
+        Rectangle window, bgRect1, bgRect2;
+        Texture2D xwingTexture, bgTexture;
+        XWing xwing;
+        Vector2 bgSpeed;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -22,46 +22,34 @@ namespace Space_Invaders
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _graphics.PreferredBackBufferWidth = 800;
-            _graphics.PreferredBackBufferHeight = 900;
+            window = new Rectangle(0, 0, 800, 900);
+            bgRect1 = new Rectangle(0, 0, 800, 900);
+            bgRect2 = new Rectangle(-900, 0, 800, 900);
+            _graphics.PreferredBackBufferWidth = window.Width;
+            _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.ApplyChanges();
-            window = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
-            xwingRect = new Rectangle(350, 820, 100, 75);
-            xwingSpeed = new Vector2(0, 0);
+            bgSpeed = new Vector2(0, 4);
+            
             base.Initialize();
+            xwing = new XWing(xwingTexture, new Rectangle(350, 820, 100, 75), new Vector2(0, 0));
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             xwingTexture = Content.Load<Texture2D>("x-wing");
-
+            bgTexture = Content.Load<Texture2D>("spaceInvadersBG");
+            bgRect1.Offset(bgSpeed);
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
-            keyboardState = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            xwingRect.Offset(xwingSpeed);
             // TODO: Add your update logic here
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                xwingSpeed.X = -4;
-            }
-            if (keyboardState.IsKeyDown (Keys.Right))
-            {
-                xwingSpeed.X = 4;
-            }
-            if (xwingRect.X <= window.X)
-            {
-                xwingRect.X = (window.X + 1);
-            }
-            if (xwingRect.Right >= window.Right)
-            {
-                xwingRect.X = (window.Right - xwingRect.Width - 1);
-            }
+            xwing.Move(window);
+
             base.Update(gameTime);
         }
 
@@ -70,7 +58,7 @@ namespace Space_Invaders
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(xwingTexture, xwingRect, Color.White);
+            xwing.Draw(_spriteBatch);
             // TODO: Add your drawing code here
             _spriteBatch.End();
             base.Draw(gameTime);
