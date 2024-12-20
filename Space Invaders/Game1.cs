@@ -24,7 +24,7 @@ namespace Space_Invaders
             // TODO: Add your initialization logic here
             window = new Rectangle(0, 0, 800, 900);
             bgRect1 = new Rectangle(0, 0, 800, 900);
-            bgRect2 = new Rectangle(-900, 0, 800, 900);
+            bgRect2 = new Rectangle(0, -900, 800, 900);
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.ApplyChanges();
@@ -39,7 +39,8 @@ namespace Space_Invaders
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             xwingTexture = Content.Load<Texture2D>("x-wing");
             bgTexture = Content.Load<Texture2D>("spaceInvadersBG");
-            bgRect1.Offset(bgSpeed);
+
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -49,7 +50,12 @@ namespace Space_Invaders
                 Exit();
             // TODO: Add your update logic here
             xwing.Move(window);
-
+            bgRect1.Offset(bgSpeed);
+            bgRect2.Offset(bgSpeed);
+            if (bgRect1.Y > 900)
+                bgRect1.Y = -900;
+            if (bgRect2.Y > 900)
+                bgRect2.Y = -900;
             base.Update(gameTime);
         }
 
@@ -57,7 +63,8 @@ namespace Space_Invaders
         {
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
-
+            _spriteBatch.Draw(bgTexture, bgRect1, Color.White);
+            _spriteBatch.Draw(bgTexture, bgRect2, Color.White);
             xwing.Draw(_spriteBatch);
             // TODO: Add your drawing code here
             _spriteBatch.End();
