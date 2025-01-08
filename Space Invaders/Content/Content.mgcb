@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin laser_X-Wing.png
+#begin laser_X-Wing1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:laser_X-Wing.png
+/build:laser_X-Wing1.png
 
 #begin spaceInvadersBG.png
 /importer:TextureImporter

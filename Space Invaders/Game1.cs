@@ -9,9 +9,11 @@ namespace Space_Invaders
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         Rectangle window, bgRect1, bgRect2;
-        Texture2D xwingTexture, bgTexture;
+        Texture2D xwingTexture, bgTexture, laserTexture;
         XWing xwing;
+        Laser laser;
         Vector2 bgSpeed;
+        KeyboardState keyboardState;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -25,13 +27,14 @@ namespace Space_Invaders
             window = new Rectangle(0, 0, 800, 900);
             bgRect1 = new Rectangle(0, 0, 800, 900);
             bgRect2 = new Rectangle(0, -900, 800, 900);
+            
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.ApplyChanges();
             bgSpeed = new Vector2(0, 4);
-            
             base.Initialize();
             xwing = new XWing(xwingTexture, new Rectangle(350, 820, 100, 75), new Vector2(0, 0));
+            
         }
 
         protected override void LoadContent()
@@ -39,16 +42,18 @@ namespace Space_Invaders
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             xwingTexture = Content.Load<Texture2D>("x-wing");
             bgTexture = Content.Load<Texture2D>("spaceInvadersBG");
+            laserTexture = Content.Load<Texture2D>("laser_X-Wing1");
 
 
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
-        {
+        { 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             // TODO: Add your update logic here
+            keyboardState = Keyboard.GetState();
             xwing.Move(window);
             bgRect1.Offset(bgSpeed);
             bgRect2.Offset(bgSpeed);
@@ -56,7 +61,9 @@ namespace Space_Invaders
                 bgRect1.Y = -900;
             if (bgRect2.Y > 900)
                 bgRect2.Y = -900;
+            laser.Move(window);
             base.Update(gameTime);
+            //laser = new Laser(laserTexture, new Rectangle(xwing.X, 900, 10, 50), new Vector2(0, 0));
         }
 
         protected override void Draw(GameTime gameTime)
@@ -66,6 +73,7 @@ namespace Space_Invaders
             _spriteBatch.Draw(bgTexture, bgRect1, Color.White);
             _spriteBatch.Draw(bgTexture, bgRect2, Color.White);
             xwing.Draw(_spriteBatch);
+            laser.Draw(_spriteBatch);
             // TODO: Add your drawing code here
             _spriteBatch.End();
             base.Draw(gameTime);

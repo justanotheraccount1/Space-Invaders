@@ -4,18 +4,19 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Space_Invaders
 {
-    public class XWing
+    public class Laser
     {
         private Texture2D _texture;
         private Rectangle _rectangle;
         private Vector2 _speed;
         KeyboardState keyboardState;
-        public XWing(Texture2D texture, Rectangle rectangle, Vector2 speed)
+        public Laser(Texture2D texture, Rectangle rectangle, Vector2 speed)
         {
             _texture = texture;
             _rectangle = rectangle;
@@ -33,37 +34,23 @@ namespace Space_Invaders
         public Rectangle Rectangle
         {
             get { return _rectangle; }
+            set { _rectangle = value; }
         }
-
-        public int X
-        {
-            get
-            {
-                return _rectangle.X;
-            }
-        }
-
         public void Move(Rectangle window)
         {
-            keyboardState = Keyboard.GetState();
-
             _rectangle.Offset(_speed);
-            if (keyboardState.IsKeyDown(Keys.Left))
+            keyboardState = Keyboard.GetState();
+            if (keyboardState.IsKeyDown(Keys.Space))
             {
-                _speed.X = -4;
+                _speed.Y = -16;
+                
             }
-            if (keyboardState.IsKeyDown(Keys.Right))
+            if (_rectangle.Bottom <= 0)
             {
-                _speed.X = 4;
+                _speed.Y = 0;
+                _rectangle.Y = 900;
             }
-            if (_rectangle.X <= window.X)
-            {
-                _rectangle.X = (window.X + 1);
-            }
-            if (_rectangle.Right >= window.Right)
-            {
-                _rectangle.X = (window.Right - _rectangle.Width - 1);
-            }
+               
         }
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -71,3 +58,4 @@ namespace Space_Invaders
         }
     }
 }
+
