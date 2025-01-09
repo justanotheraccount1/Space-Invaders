@@ -45,11 +45,7 @@ namespace Space_Invaders
                 _speed.Y = -16;
                 
             }
-            if (_rectangle.Bottom <= 0)
-            {
-                _speed.Y = 0;
-                _rectangle.Y = 900;
-            }
+
                
         }
         public void Draw(SpriteBatch spriteBatch)

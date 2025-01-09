@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Space_Invaders
 {
@@ -14,6 +15,7 @@ namespace Space_Invaders
         Laser laser;
         Vector2 bgSpeed;
         KeyboardState keyboardState;
+        List<Laser> lasers;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -24,6 +26,7 @@ namespace Space_Invaders
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            lasers = new List<Laser>();
             window = new Rectangle(0, 0, 800, 900);
             bgRect1 = new Rectangle(0, 0, 800, 900);
             bgRect2 = new Rectangle(0, -900, 800, 900);
@@ -34,6 +37,7 @@ namespace Space_Invaders
             bgSpeed = new Vector2(0, 4);
             base.Initialize();
             xwing = new XWing(xwingTexture, new Rectangle(350, 820, 100, 75), new Vector2(0, 0));
+            
             
         }
 
@@ -54,6 +58,10 @@ namespace Space_Invaders
                 Exit();
             // TODO: Add your update logic here
             keyboardState = Keyboard.GetState();
+            for (int i = 0; i < (lasers.Count + 1); i++)
+            {
+                lasers[i].Move(window);
+            }
             xwing.Move(window);
             bgRect1.Offset(bgSpeed);
             bgRect2.Offset(bgSpeed);
@@ -61,9 +69,13 @@ namespace Space_Invaders
                 bgRect1.Y = -900;
             if (bgRect2.Y > 900)
                 bgRect2.Y = -900;
-            laser.Move(window);
+            if (keyboardState.IsKeyDown(Keys.Space))
+            {
+                lasers.Add(new Laser(laserTexture, new Rectangle((xwing.X + 45), 900, 10, 50), new Vector2(0, 0)));
+
+            }
             base.Update(gameTime);
-            //laser = new Laser(laserTexture, new Rectangle(xwing.X, 900, 10, 50), new Vector2(0, 0));
+            
         }
 
         protected override void Draw(GameTime gameTime)
@@ -73,7 +85,11 @@ namespace Space_Invaders
             _spriteBatch.Draw(bgTexture, bgRect1, Color.White);
             _spriteBatch.Draw(bgTexture, bgRect2, Color.White);
             xwing.Draw(_spriteBatch);
-            laser.Draw(_spriteBatch);
+            for (int i = 0; i < (lasers.Count + 1); i++)
+            {
+                lasers[i].Draw(_spriteBatch);
+            }
+            
             // TODO: Add your drawing code here
             _spriteBatch.End();
             base.Draw(gameTime);
