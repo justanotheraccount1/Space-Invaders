@@ -13,6 +13,16 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin 8-bit-hud.ttf
+/copy:8-bit-hud.ttf
+
+#begin 8bitText.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:8bitText.spritefont
+
 #begin laser_X-Wing1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -30,6 +40,25 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:laser.mp3
+
+#begin optionsTab.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:optionsTab.png
+
+#begin smallText.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:smallText.spritefont
 
 #begin spaceInvadersBG.png
 /importer:TextureImporter
