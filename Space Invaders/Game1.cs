@@ -21,15 +21,15 @@ namespace Space_Invaders
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private KeyboardState oldState;
-        Rectangle window, bgRect1, bgRect2, optionsRect;
+        Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle;
         Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture;
         XWing xwing;
         Vector2 bgSpeed;
         KeyboardState keyboardState;
         List<Laser> lasers;
         SoundEffect laserSound;
-        SoundEffect introTheme;
-        SoundEffectInstance introThemeInstance;
+        SoundEffect introTheme, battleTheme, forceTheme;
+        SoundEffectInstance introThemeInstance, battleThemeInstance, forceThemeInstance;
         MouseState mouseState;
         SpriteFont textFont, smallTextFont;
         int score;
@@ -48,7 +48,8 @@ namespace Space_Invaders
             window = new Rectangle(0, 0, 800, 900);
             bgRect1 = new Rectangle(0, 0, 800, 900);
             bgRect2 = new Rectangle(0, -900, 800, 900);
-            optionsRect = new Rectangle(750, 0, 50, 50);
+            optionsRect = new Rectangle(0, 50, 50, 50);
+            optionsRectTitle = new Rectangle(750, 850, 50, 50);
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.ApplyChanges();
@@ -58,6 +59,8 @@ namespace Space_Invaders
             
             screen = Screen.Intro;
             introThemeInstance.IsLooped = true;
+            battleThemeInstance.IsLooped = true;
+            forceThemeInstance.IsLooped = true;
         }
 
         protected override void LoadContent()
@@ -69,9 +72,13 @@ namespace Space_Invaders
             optionsTexture = Content.Load<Texture2D>("optionsTab");
             laserSound = Content.Load<SoundEffect>("laser");
             introTheme = Content.Load<SoundEffect>("Star Wars");
+            battleTheme = Content.Load<SoundEffect>("StarWarsBattle");
+            forceTheme = Content.Load<SoundEffect>("ForceTheme");
             textFont = Content.Load<SpriteFont>("8bitText");
             smallTextFont = Content.Load<SpriteFont>("smallText");
             introThemeInstance = introTheme.CreateInstance();
+            battleThemeInstance = battleTheme.CreateInstance();
+            forceThemeInstance = forceTheme.CreateInstance();
             // TODO: use this.Content to load your game content here
         }
 
@@ -88,17 +95,35 @@ namespace Space_Invaders
                 bgRect1.Y = -900;
             if (bgRect2.Y > 900)
                 bgRect2.Y = -900;
+
+
+
+
+
             if (screen == Screen.Intro)
             {
                 introThemeInstance.Play();
+                forceThemeInstance.Stop();
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    screen = Screen.Main;
+                    if (optionsRectTitle.Contains(mouseState.Position))
+                    {
+                        screen = Screen.Options;
+                    }
+                    else
+                    {
+                        screen = Screen.Main;
+                    }
                 }
             }
+
+
+
             if (screen == Screen.Main)
             {
                 introThemeInstance.Stop();
+                forceThemeInstance.Stop();
+                battleThemeInstance.Play();
                 for (int i = 0; i < (lasers.Count); i++)
                 {
                     lasers[i].Move(window);
@@ -116,21 +141,24 @@ namespace Space_Invaders
                     laserSound.Play();
                 }
             }
-            for (int i = 0; i < (lasers.Count); i++)
-            {
-                lasers[i].Move(window);
-            }
-            xwing.Move(window);
             
-            if (oldState.IsKeyUp(Keys.Space) && keyboardState.IsKeyDown(Keys.Space))
+
+
+            if (screen == Screen.Options)
             {
-                lasers.Add(new Laser(laserTexture, new Rectangle((xwing.X + 45), 800, 10, 50), new Vector2(0, 0)));
-                laserSound.Play();
+                battleThemeInstance.Stop();
+                introThemeInstance.Stop();
+                forceThemeInstance.Play();
             }
+
+
+
             if (screen == Screen.End)
             {
 
             }
+
+
             oldState = keyboardState;
             base.Update(gameTime);
             
@@ -144,13 +172,22 @@ namespace Space_Invaders
             {
                 _spriteBatch.Draw(bgTexture, bgRect1, Color.White);
                 _spriteBatch.Draw(bgTexture, bgRect2, Color.White);
-                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(78, 53), Color.White);
+                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(78, 53), Color.DarkBlue);
+                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(72, 47), Color.White);
                 _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(75, 50), Color.Yellow);
-                _spriteBatch.DrawString(textFont, "Click anywhere", new Vector2(78, 453), Color.White);
+                _spriteBatch.DrawString(textFont, "Click anywhere", new Vector2(72, 447), Color.White);
+                _spriteBatch.DrawString(textFont, "Click anywhere", new Vector2(78, 453), Color.Indigo);
                 _spriteBatch.DrawString(textFont, "Click anywhere", new Vector2(75, 450), Color.LightBlue);
-                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(90, 503), Color.White);
+                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(84, 497), Color.White);
+                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(90, 503), Color.Indigo);
                 _spriteBatch.DrawString(textFont, "to continue...", new Vector2(87, 500), Color.LightBlue);
+                _spriteBatch.Draw(optionsTexture, optionsRectTitle, Color.White);
             }
+            if (screen == Screen.Options)
+            {
+
+            }
+
             if (screen == Screen.Main)
             {
                 
@@ -162,6 +199,7 @@ namespace Space_Invaders
                     lasers[i].Draw(_spriteBatch);
                 }
                 xwing.Draw(_spriteBatch);
+                _spriteBatch.Draw(optionsTexture, optionsRect, Color.White);
             }
             if (screen == Screen.End)
             {
