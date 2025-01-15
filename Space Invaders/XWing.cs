@@ -50,11 +50,11 @@ namespace Space_Invaders
             _rectangle.Offset(_speed);
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                _speed.X = -4;
+                _speed.X = -6;
             }
             if (keyboardState.IsKeyDown(Keys.Right))
             {
-                _speed.X = 4;
+                _speed.X = 6;
             }
             if (_rectangle.X <= window.X)
             {

@@ -18,11 +18,12 @@ namespace Space_Invaders
     public class Game1 : Game
     {
         Screen screen;
+        bool clickedKeyboard;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private KeyboardState oldState;
-        Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle;
-        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture;
+        Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle, keyboardRect;
+        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture, keyboardTexture;
         XWing xwing;
         Vector2 bgSpeed;
         KeyboardState keyboardState;
@@ -49,6 +50,7 @@ namespace Space_Invaders
             bgRect1 = new Rectangle(0, 0, 800, 900);
             bgRect2 = new Rectangle(0, -900, 800, 900);
             optionsRect = new Rectangle(0, 50, 50, 50);
+            keyboardRect = new Rectangle(300, 450, 200, 150);
             optionsRectTitle = new Rectangle(750, 850, 50, 50);
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.PreferredBackBufferHeight = window.Height;
@@ -61,12 +63,14 @@ namespace Space_Invaders
             introThemeInstance.IsLooped = true;
             battleThemeInstance.IsLooped = true;
             forceThemeInstance.IsLooped = true;
+            clickedKeyboard = false;
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             xwingTexture = Content.Load<Texture2D>("x-wing");
+            keyboardTexture = Content.Load<Texture2D>("cleanKeyboard");
             bgTexture = Content.Load<Texture2D>("spaceInvadersBG");
             laserTexture = Content.Load<Texture2D>("laser_X-Wing1");
             optionsTexture = Content.Load<Texture2D>("optionsTab");
@@ -124,6 +128,13 @@ namespace Space_Invaders
                 introThemeInstance.Stop();
                 forceThemeInstance.Stop();
                 battleThemeInstance.Play();
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    if (optionsRectTitle.Contains(mouseState.Position))
+                    {
+                        screen = Screen.Options;
+                    }
+                }
                 for (int i = 0; i < (lasers.Count); i++)
                 {
                     lasers[i].Move(window);
@@ -149,6 +160,17 @@ namespace Space_Invaders
                 battleThemeInstance.Stop();
                 introThemeInstance.Stop();
                 forceThemeInstance.Play();
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    if (keyboardRect.Contains(mouseState.Position))
+                    {
+                        clickedKeyboard = true;
+                    }
+                    else
+                    {
+                        clickedKeyboard = false;
+                    }
+                }
             }
 
 
@@ -185,7 +207,19 @@ namespace Space_Invaders
             }
             if (screen == Screen.Options)
             {
-
+                if (keyboardRect.Contains(mouseState.Position))
+                {
+                    _spriteBatch.Draw(keyboardTexture, new Rectangle(290, 440, 220, 170), Color.LightBlue);
+                }
+                
+                if (clickedKeyboard == true)
+                {
+                    _spriteBatch.DrawString(smallTextFont, "Movement:", new Vector2(260, 630), Color.White); 
+                    _spriteBatch.DrawString(smallTextFont, "[<-] = Left", new Vector2(120, 700), Color.White);
+                    _spriteBatch.DrawString(smallTextFont, "[->] = Right", new Vector2(450, 700), Color.White);
+                    _spriteBatch.Draw(keyboardTexture, new Rectangle(290, 440, 220, 170), Color.LightBlue);
+                }
+                _spriteBatch.Draw(keyboardTexture, keyboardRect, Color.White);
             }
 
             if (screen == Screen.Main)
