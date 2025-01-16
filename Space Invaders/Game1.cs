@@ -18,19 +18,19 @@ namespace Space_Invaders
     public class Game1 : Game
     {
         Screen screen;
-        bool clickedKeyboard;
+        bool clickedKeyboard, clickedSpace;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private KeyboardState oldState;
-        Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle, keyboardRect;
-        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture, keyboardTexture;
+        Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle, keyboardRect, backRect, spaceRect;
+        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture, keyboardTexture, backTexture, spaceTexture;
         XWing xwing;
         Vector2 bgSpeed;
         KeyboardState keyboardState;
         List<Laser> lasers;
-        SoundEffect laserSound;
+        SoundEffect laserSound, saberHover;
         SoundEffect introTheme, battleTheme, forceTheme;
-        SoundEffectInstance introThemeInstance, battleThemeInstance, forceThemeInstance;
+        SoundEffectInstance introThemeInstance, battleThemeInstance, forceThemeInstance, saberHoverInstance;
         MouseState mouseState;
         SpriteFont textFont, smallTextFont;
         int score;
@@ -51,7 +51,9 @@ namespace Space_Invaders
             bgRect2 = new Rectangle(0, -900, 800, 900);
             optionsRect = new Rectangle(0, 50, 50, 50);
             keyboardRect = new Rectangle(300, 450, 200, 150);
+            spaceRect = new Rectangle(175, 50, 350, 75);
             optionsRectTitle = new Rectangle(750, 850, 50, 50);
+            backRect = new Rectangle(0, 0, 100, 50);
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.ApplyChanges();
@@ -63,26 +65,36 @@ namespace Space_Invaders
             introThemeInstance.IsLooped = true;
             battleThemeInstance.IsLooped = true;
             forceThemeInstance.IsLooped = true;
+            saberHoverInstance.IsLooped = true;
             clickedKeyboard = false;
+            clickedSpace = false;
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
             xwingTexture = Content.Load<Texture2D>("x-wing");
             keyboardTexture = Content.Load<Texture2D>("cleanKeyboard");
             bgTexture = Content.Load<Texture2D>("spaceInvadersBG");
             laserTexture = Content.Load<Texture2D>("laser_X-Wing1");
             optionsTexture = Content.Load<Texture2D>("optionsTab");
+            backTexture = Content.Load<Texture2D>("backButton");
+            spaceTexture = Content.Load<Texture2D>("SpaceBar");
+
             laserSound = Content.Load<SoundEffect>("laser");
+            saberHover = Content.Load<SoundEffect>("lightsaber");
             introTheme = Content.Load<SoundEffect>("Star Wars");
             battleTheme = Content.Load<SoundEffect>("StarWarsBattle");
             forceTheme = Content.Load<SoundEffect>("ForceTheme");
+
             textFont = Content.Load<SpriteFont>("8bitText");
             smallTextFont = Content.Load<SpriteFont>("smallText");
+
             introThemeInstance = introTheme.CreateInstance();
             battleThemeInstance = battleTheme.CreateInstance();
             forceThemeInstance = forceTheme.CreateInstance();
+            saberHoverInstance = saberHover.CreateInstance();
             // TODO: use this.Content to load your game content here
         }
 
@@ -93,12 +105,18 @@ namespace Space_Invaders
             // TODO: Add your update logic here
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
-            bgRect1.Offset(bgSpeed);
-            bgRect2.Offset(bgSpeed);
-            if (bgRect1.Y > 900)
-                bgRect1.Y = -900;
-            if (bgRect2.Y > 900)
-                bgRect2.Y = -900;
+
+
+            if (screen != Screen.Options)
+            {
+                bgRect1.Offset(bgSpeed);
+                bgRect2.Offset(bgSpeed);
+                if (bgRect1.Y > 900)
+                    bgRect1.Y = -900;
+                if (bgRect2.Y > 900)
+                    bgRect2.Y = -900;
+            }
+            
 
 
 
@@ -114,10 +132,11 @@ namespace Space_Invaders
                     {
                         screen = Screen.Options;
                     }
-                    else
-                    {
-                        screen = Screen.Main;
-                    }
+
+                }
+                if (keyboardState.IsKeyDown(Keys.Space))
+                {
+                    screen = Screen.Main;
                 }
             }
 
@@ -130,7 +149,7 @@ namespace Space_Invaders
                 battleThemeInstance.Play();
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    if (optionsRectTitle.Contains(mouseState.Position))
+                    if (optionsRect.Contains(mouseState.Position))
                     {
                         screen = Screen.Options;
                     }
@@ -160,15 +179,32 @@ namespace Space_Invaders
                 battleThemeInstance.Stop();
                 introThemeInstance.Stop();
                 forceThemeInstance.Play();
+                if (backRect.Contains(mouseState.Position) || keyboardRect.Contains(mouseState.Position) || spaceRect.Contains(mouseState.Position))
+                {
+                    saberHoverInstance.Play();
+                }
+                else if (!backRect.Contains(mouseState.Position) || !keyboardRect.Contains(mouseState.Position) || !spaceRect.Contains(mouseState.Position))
+                {
+                    saberHoverInstance.Stop();
+                }
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     if (keyboardRect.Contains(mouseState.Position))
                     {
                         clickedKeyboard = true;
                     }
+                    else if (spaceRect.Contains(mouseState.Position))
+                    {
+                        clickedSpace = true;
+                    }
+                    else if (backRect.Contains(mouseState.Position))
+                    {
+                        screen = Screen.Intro;
+                    }
                     else
                     {
                         clickedKeyboard = false;
+                        clickedSpace = false;
                     }
                 }
             }
@@ -194,32 +230,52 @@ namespace Space_Invaders
             {
                 _spriteBatch.Draw(bgTexture, bgRect1, Color.White);
                 _spriteBatch.Draw(bgTexture, bgRect2, Color.White);
-                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(78, 53), Color.DarkBlue);
-                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(72, 47), Color.White);
-                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(75, 50), Color.Yellow);
-                _spriteBatch.DrawString(textFont, "Click anywhere", new Vector2(72, 447), Color.White);
-                _spriteBatch.DrawString(textFont, "Click anywhere", new Vector2(78, 453), Color.Indigo);
-                _spriteBatch.DrawString(textFont, "Click anywhere", new Vector2(75, 450), Color.LightBlue);
-                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(84, 497), Color.White);
-                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(90, 503), Color.Indigo);
-                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(87, 500), Color.LightBlue);
+                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(80, 50), Color.DarkGoldenrod);
+                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(74, 44), Color.White);
+                _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(77, 47), Color.Yellow);
+                _spriteBatch.DrawString(textFont, "Press SPACE", new Vector2(124, 439), Color.White);
+                _spriteBatch.DrawString(textFont, "Press SPACE", new Vector2(130, 445), Color.DarkCyan);
+                _spriteBatch.DrawString(textFont, "Press SPACE", new Vector2(127, 442), Color.LightBlue);
+                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(124, 497), Color.White);
+                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(130, 503), Color.DarkCyan);
+                _spriteBatch.DrawString(textFont, "to continue...", new Vector2(127, 500), Color.LightBlue);
                 _spriteBatch.Draw(optionsTexture, optionsRectTitle, Color.White);
             }
             if (screen == Screen.Options)
             {
+                _spriteBatch.Draw(bgTexture, window, Color.White);
+                
+
                 if (keyboardRect.Contains(mouseState.Position))
                 {
                     _spriteBatch.Draw(keyboardTexture, new Rectangle(290, 440, 220, 170), Color.LightBlue);
+                    
                 }
-                
+                if (spaceRect.Contains(mouseState.Position))
+                {
+                    _spriteBatch.Draw(spaceTexture, new Rectangle(165, 40, 370, 95), Color.LightCyan);
+
+                }
+                if (backRect.Contains(mouseState.Position))
+                {
+                    _spriteBatch.Draw(backTexture, new Rectangle(-10, -10, 120, 70), Color.LightBlue);
+
+                }
+
                 if (clickedKeyboard == true)
                 {
                     _spriteBatch.DrawString(smallTextFont, "Movement:", new Vector2(260, 630), Color.White); 
                     _spriteBatch.DrawString(smallTextFont, "[<-] = Left", new Vector2(120, 700), Color.White);
                     _spriteBatch.DrawString(smallTextFont, "[->] = Right", new Vector2(450, 700), Color.White);
-                    _spriteBatch.Draw(keyboardTexture, new Rectangle(290, 440, 220, 170), Color.LightBlue);
+                    
                 }
+                if (clickedSpace == true)
+                {
+
+                }
+                _spriteBatch.Draw(backTexture, backRect, Color.White);
                 _spriteBatch.Draw(keyboardTexture, keyboardRect, Color.White);
+                _spriteBatch.Draw(spaceTexture, spaceRect, Color.White);
             }
 
             if (screen == Screen.Main)

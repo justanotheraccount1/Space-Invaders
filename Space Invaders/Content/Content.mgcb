@@ -23,6 +23,18 @@
 /processorParam:TextureFormat=Compressed
 /build:8bitText.spritefont
 
+#begin backButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:backButton.png
+
 #begin cleanKeyboard.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -59,6 +71,12 @@
 /processorParam:Quality=Best
 /build:laser.mp3
 
+#begin lightsaber.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:lightsaber.mp3
+
 #begin optionsTab.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -77,6 +95,18 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:smallText.spritefont
+
+#begin SpaceBar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:SpaceBar.png
 
 #begin spaceInvadersBG.png
 /importer:TextureImporter
