@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace Space_Invaders
 {
-    public class XWing
+    internal class TieFighter
     {
         private Texture2D _texture;
         private Rectangle _rectangle;
         private Vector2 _speed;
+        private Random generator = new Random();
         KeyboardState keyboardState;
-        public XWing(Texture2D texture, Rectangle rectangle, Vector2 speed)
+        public TieFighter(Texture2D texture, Rectangle rectangle, Vector2 speed)
         {
             _texture = texture;
             _rectangle = rectangle;
@@ -45,29 +46,10 @@ namespace Space_Invaders
 
         public void Move(Rectangle window)
         {
-            keyboardState = Keyboard.GetState();
-
             _rectangle.Offset(_speed);
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                _speed.X = -6;
-            }
-            if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                _speed.X = 6;
-            }
-            if (keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
-            {
-                _speed.X = 0;
-            }
-            if (_rectangle.X <= window.X)
-            {
-                _rectangle.X = (window.X + 1);
-            }
-            if (_rectangle.Right >= window.Right)
-            {
-                _rectangle.X = (window.Right - _rectangle.Width - 1);
-            }
+
+            _speed.Y = generator.Next(1, 2);
+
         }
         public void Draw(SpriteBatch spriteBatch)
         {

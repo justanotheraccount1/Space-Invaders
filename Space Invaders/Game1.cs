@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Space_Invaders
 {
@@ -18,13 +20,15 @@ namespace Space_Invaders
     public class Game1 : Game
     {
         Screen screen;
+        Random generator = new Random();
         bool clickedKeyboard, clickedSpace;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private KeyboardState oldState;
         Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle, keyboardRect, backRect, spaceRect;
-        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture, keyboardTexture, backTexture, spaceTexture;
+        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture, keyboardTexture, backTexture, spaceTexture, tieTexture;
         XWing xwing;
+        List<TieFighter> tieFighter;
         Vector2 bgSpeed;
         KeyboardState keyboardState;
         List<Laser> lasers;
@@ -46,6 +50,7 @@ namespace Space_Invaders
             // TODO: Add your initialization logic here
             score = 0;
             lasers = new List<Laser>();
+            tieFighter = new List<TieFighter>();
             window = new Rectangle(0, 0, 800, 900);
             bgRect1 = new Rectangle(0, 0, 800, 900);
             bgRect2 = new Rectangle(0, -900, 800, 900);
@@ -60,7 +65,11 @@ namespace Space_Invaders
             bgSpeed = new Vector2(0, 4);
             base.Initialize();
             xwing = new XWing(xwingTexture, new Rectangle(350, 820, 100, 75), new Vector2(0, 0));
-            
+            for (int i = 0; i <= generator.Next(10, 200); i++)
+            {
+                tieFighter.Add(new TieFighter(tieTexture, new Rectangle(generator.Next(10, 750), generator.Next(-1500, -100), 50, 75), new Vector2(0, 0)));
+            }
+
             screen = Screen.Intro;
             introThemeInstance.IsLooped = true;
             battleThemeInstance.IsLooped = true;
@@ -75,6 +84,7 @@ namespace Space_Invaders
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             xwingTexture = Content.Load<Texture2D>("x-wing");
+            tieTexture = Content.Load<Texture2D>("tieFighter");
             keyboardTexture = Content.Load<Texture2D>("cleanKeyboard");
             bgTexture = Content.Load<Texture2D>("spaceInvadersBG");
             laserTexture = Content.Load<Texture2D>("laser_X-Wing1");
@@ -147,6 +157,8 @@ namespace Space_Invaders
                 introThemeInstance.Stop();
                 forceThemeInstance.Stop();
                 battleThemeInstance.Play();
+                
+
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     if (optionsRect.Contains(mouseState.Position))
@@ -157,6 +169,10 @@ namespace Space_Invaders
                 for (int i = 0; i < (lasers.Count); i++)
                 {
                     lasers[i].Move(window);
+                }
+                for (int i = 0; i < (tieFighter.Count); i++)
+                {
+                    tieFighter[i].Move(window);
                 }
                 xwing.Move(window);
                 bgRect1.Offset(bgSpeed);
@@ -284,6 +300,10 @@ namespace Space_Invaders
                 _spriteBatch.Draw(bgTexture, bgRect1, Color.White);
                 _spriteBatch.Draw(bgTexture, bgRect2, Color.White);
                 _spriteBatch.DrawString(smallTextFont, "Score: " + score, new Vector2(0, 0), Color.White);
+                for (int i = 0; i < (tieFighter.Count); i++)
+                {
+                    tieFighter[i].Draw(_spriteBatch);
+                }
                 for (int i = 0; i < (lasers.Count); i++)
                 {
                     lasers[i].Draw(_spriteBatch);

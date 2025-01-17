@@ -16,6 +16,18 @@
 #begin 8-bit-hud.ttf
 /copy:8-bit-hud.ttf
 
+#begin 8bitExplode.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:8bitExplode.png
+
 #begin 8bitText.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -131,6 +143,18 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:StarWarsBattle.mp3
+
+#begin tieFighter.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:tieFighter.png
 
 #begin x-wing.png
 /importer:TextureImporter
