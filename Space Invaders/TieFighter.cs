@@ -51,6 +51,12 @@ namespace Space_Invaders
             _speed.Y = generator.Next(1, 2);
 
         }
+
+        public bool Collide(Rectangle item)
+        {
+            return _rectangle.Intersects(item);
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_texture, _rectangle, Color.White);

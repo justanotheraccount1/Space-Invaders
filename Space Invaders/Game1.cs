@@ -144,7 +144,7 @@ namespace Space_Invaders
                     }
 
                 }
-                if (keyboardState.IsKeyDown(Keys.Space))
+                if (keyboardState.IsKeyDown(Keys.Enter))
                 {
                     screen = Screen.Main;
                 }
@@ -169,11 +169,30 @@ namespace Space_Invaders
                 for (int i = 0; i < (lasers.Count); i++)
                 {
                     lasers[i].Move(window);
+                    if (!window.Contains(lasers[i].Rectangle))
+                    {
+                        lasers.RemoveAt(i);
+                        i--;
+                    }
                 }
                 for (int i = 0; i < (tieFighter.Count); i++)
                 {
                     tieFighter[i].Move(window);
                 }
+                for (int i = 0; i < (tieFighter.Count); i++)
+                {
+                    for (int j = 0; j < (lasers.Count); j++)
+                    {
+                        if (tieFighter[i].Collide(lasers[j].Rectangle))
+                        {
+                            tieFighter.RemoveAt(i);
+                            i--;
+                            lasers.RemoveAt(j);
+                        }
+                    }
+                    
+                }
+                
                 xwing.Move(window);
                 bgRect1.Offset(bgSpeed);
                 bgRect2.Offset(bgSpeed);
@@ -249,9 +268,9 @@ namespace Space_Invaders
                 _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(80, 50), Color.DarkGoldenrod);
                 _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(74, 44), Color.White);
                 _spriteBatch.DrawString(textFont, "Space Invaders", new Vector2(77, 47), Color.Yellow);
-                _spriteBatch.DrawString(textFont, "Press SPACE", new Vector2(124, 439), Color.White);
-                _spriteBatch.DrawString(textFont, "Press SPACE", new Vector2(130, 445), Color.DarkCyan);
-                _spriteBatch.DrawString(textFont, "Press SPACE", new Vector2(127, 442), Color.LightBlue);
+                _spriteBatch.DrawString(textFont, "Press ENTER", new Vector2(124, 439), Color.White);
+                _spriteBatch.DrawString(textFont, "Press ENTER", new Vector2(130, 445), Color.DarkCyan);
+                _spriteBatch.DrawString(textFont, "Press ENTER", new Vector2(127, 442), Color.LightBlue);
                 _spriteBatch.DrawString(textFont, "to continue...", new Vector2(124, 497), Color.White);
                 _spriteBatch.DrawString(textFont, "to continue...", new Vector2(130, 503), Color.DarkCyan);
                 _spriteBatch.DrawString(textFont, "to continue...", new Vector2(127, 500), Color.LightBlue);
@@ -302,7 +321,7 @@ namespace Space_Invaders
                 _spriteBatch.DrawString(smallTextFont, "Score: " + score, new Vector2(0, 0), Color.White);
                 for (int i = 0; i < (tieFighter.Count); i++)
                 {
-                    tieFighter[i].Draw(_spriteBatch);
+                    tieFighter[i].Draw(_spriteBatch); 
                 }
                 for (int i = 0; i < (lasers.Count); i++)
                 {
