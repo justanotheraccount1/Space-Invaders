@@ -14,7 +14,8 @@ namespace Space_Invaders
         Intro,
         Main,
         Options,
-        End
+        End,
+        Win
 
     }
     public class Game1 : Game
@@ -33,10 +34,10 @@ namespace Space_Invaders
         KeyboardState keyboardState;
         List<Laser> lasers;
         SoundEffect laserSound, saberHover;
-        SoundEffect introTheme, battleTheme, forceTheme;
-        SoundEffectInstance introThemeInstance, battleThemeInstance, forceThemeInstance, saberHoverInstance;
+        SoundEffect introTheme, battleTheme, forceTheme, endTheme;
+        SoundEffectInstance introThemeInstance, battleThemeInstance, forceThemeInstance, saberHoverInstance, endThemeInstance;
         MouseState mouseState;
-        SpriteFont textFont, smallTextFont;
+        SpriteFont textFont, smallTextFont, largeTextFont;
         int score;
         public Game1()
         {
@@ -65,15 +66,16 @@ namespace Space_Invaders
             bgSpeed = new Vector2(0, 4);
             base.Initialize();
             xwing = new XWing(xwingTexture, new Rectangle(350, 820, 100, 75), new Vector2(0, 0));
-            for (int i = 0; i <= generator.Next(10, 200); i++)
+            for (int i = 0; i <= 200; i++)
             {
-                tieFighter.Add(new TieFighter(tieTexture, new Rectangle(generator.Next(10, 750), generator.Next(-1500, -100), 50, 75), new Vector2(0, 0)));
+                tieFighter.Add(new TieFighter(tieTexture, new Rectangle(generator.Next(10, 750), generator.Next(-3500, -100), 50, 75), new Vector2(0, 0)));
             }
 
             screen = Screen.Intro;
             introThemeInstance.IsLooped = true;
             battleThemeInstance.IsLooped = true;
             forceThemeInstance.IsLooped = true;
+            endThemeInstance.IsLooped = true;
             saberHoverInstance.IsLooped = true;
             clickedKeyboard = false;
             clickedSpace = false;
@@ -97,13 +99,16 @@ namespace Space_Invaders
             introTheme = Content.Load<SoundEffect>("Star Wars");
             battleTheme = Content.Load<SoundEffect>("StarWarsBattle");
             forceTheme = Content.Load<SoundEffect>("ForceTheme");
+            endTheme = Content.Load<SoundEffect>("EndTheme");
 
             textFont = Content.Load<SpriteFont>("8bitText");
             smallTextFont = Content.Load<SpriteFont>("smallText");
+            largeTextFont = Content.Load<SpriteFont>("LargeFont");
 
             introThemeInstance = introTheme.CreateInstance();
             battleThemeInstance = battleTheme.CreateInstance();
             forceThemeInstance = forceTheme.CreateInstance();
+            endThemeInstance = endTheme.CreateInstance();
             saberHoverInstance = saberHover.CreateInstance();
             // TODO: use this.Content to load your game content here
         }
@@ -158,7 +163,7 @@ namespace Space_Invaders
                 forceThemeInstance.Stop();
                 battleThemeInstance.Play();
                 
-
+                
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     if (optionsRect.Contains(mouseState.Position))
@@ -178,8 +183,12 @@ namespace Space_Invaders
                 for (int i = 0; i < (tieFighter.Count); i++)
                 {
                     tieFighter[i].Move(window);
+                    if (xwing.Rectangle.Intersects(tieFighter[i].Rectangle) || tieFighter[i].Y >= 900)
+                    {
+                        screen = Screen.End;
+                    }
                 }
-                for (int i = 0; i < (tieFighter.Count); i++)
+                for (int i = 1; i < (tieFighter.Count); i++)
                 {
                     for (int j = 0; j < (lasers.Count); j++)
                     {
@@ -188,6 +197,8 @@ namespace Space_Invaders
                             tieFighter.RemoveAt(i);
                             i--;
                             lasers.RemoveAt(j);
+                            j--;
+                            score += 250;
                         }
                     }
                     
@@ -248,7 +259,10 @@ namespace Space_Invaders
 
             if (screen == Screen.End)
             {
-
+                battleThemeInstance.Stop();
+                introThemeInstance.Stop();
+                forceThemeInstance.Stop();
+                endThemeInstance.Play();
             }
 
 
@@ -332,7 +346,12 @@ namespace Space_Invaders
             }
             if (screen == Screen.End)
             {
-
+                _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(64, 154), Color.DarkRed);
+                _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(50, 140), Color.LightCoral);
+                _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(57, 147), Color.Red);
+                _spriteBatch.DrawString(largeTextFont, "OVER", new Vector2(64, 554), Color.DarkRed);
+                _spriteBatch.DrawString(largeTextFont, "OVER", new Vector2(50, 540), Color.LightCoral);
+                _spriteBatch.DrawString(largeTextFont, "OVER", new Vector2(57, 547), Color.Red);
             }
 
             

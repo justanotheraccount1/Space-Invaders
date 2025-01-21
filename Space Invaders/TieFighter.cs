@@ -43,12 +43,19 @@ namespace Space_Invaders
                 return _rectangle.X;
             }
         }
+        public int Y
+        {
+            get
+            {
+                return _rectangle.Y;
+            }
+        }
 
         public void Move(Rectangle window)
         {
             _rectangle.Offset(_speed);
 
-            _speed.Y = generator.Next(1, 2);
+            _speed.Y = 1;
 
         }
 
