@@ -33,7 +33,7 @@ namespace Space_Invaders
         Vector2 bgSpeed;
         KeyboardState keyboardState;
         List<Laser> lasers;
-        SoundEffect laserSound, saberHover;
+        SoundEffect laserSound, saberHover, explode;
         SoundEffect introTheme, battleTheme, forceTheme, endTheme;
         SoundEffectInstance introThemeInstance, battleThemeInstance, forceThemeInstance, saberHoverInstance, endThemeInstance;
         MouseState mouseState;
@@ -68,7 +68,7 @@ namespace Space_Invaders
             bgSpeed = new Vector2(0, 4);
             base.Initialize();
             xwing = new XWing(xwingTexture, new Rectangle(350, 820, 100, 75), new Vector2(0, 0));
-            for (int i = 0; i <= 100; i++)
+            for (int i = 0; i <= 99; i++)
             {
                 tieFighter.Add(new TieFighter(tieTexture, new Rectangle(generator.Next(10, 750), generator.Next(-3500, -100), 50, 75), new Vector2(0, 0)));
             }
@@ -99,6 +99,7 @@ namespace Space_Invaders
 
             laserSound = Content.Load<SoundEffect>("laser");
             saberHover = Content.Load<SoundEffect>("lightsaber");
+            explode = Content.Load<SoundEffect>("explosion");
             introTheme = Content.Load<SoundEffect>("Star Wars");
             battleTheme = Content.Load<SoundEffect>("StarWarsBattle");
             forceTheme = Content.Load<SoundEffect>("ForceTheme");
@@ -183,6 +184,7 @@ namespace Space_Invaders
                         i--;
                     }
                 }
+
                 for (int i = 0; i < (tieFighter.Count); i++)
                 {
                     tieFighter[i].Move(window);
@@ -195,13 +197,12 @@ namespace Space_Invaders
                 {
                     for (int j = 0; j < (lasers.Count); j++)
                     {
-                        if (tieFighter[i].Collide(lasers[j].Rectangle))
+                        if (tieFighter.Count > 0 && tieFighter[i].Collide(lasers[j].Rectangle))
                         {
+                            explode.Play();
                             tieFighter.RemoveAt(i);
-
-                            i--;
-
-                            
+                            if (i > 0)
+                                i--;                          
                             lasers.RemoveAt(j);
                             j--;
                             score += 250;
@@ -359,11 +360,14 @@ namespace Space_Invaders
                 }
                 xwing.Draw(_spriteBatch);
                 _spriteBatch.Draw(optionsTexture, optionsRect, Color.White);
-                if (score >= 25250)
+                if (score >= 25000)
                 {
-                    _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(64, 154), Color.DarkGoldenrod);
-                    _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(50, 140), Color.White);
-                    _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(57, 147), Color.Yellow);
+                    _spriteBatch.DrawString(largeTextFont, "YOU", new Vector2(64, 154), Color.DarkGoldenrod);
+                    _spriteBatch.DrawString(largeTextFont, "YOU", new Vector2(50, 140), Color.White);
+                    _spriteBatch.DrawString(largeTextFont, "YOU", new Vector2(57, 147), Color.Yellow);
+                    _spriteBatch.DrawString(largeTextFont, "WIN", new Vector2(64, 554), Color.DarkGoldenrod);
+                    _spriteBatch.DrawString(largeTextFont, "WIN", new Vector2(50, 540), Color.White);
+                    _spriteBatch.DrawString(largeTextFont, "WIN", new Vector2(57, 547), Color.Yellow);
                 }
             }
             if (screen == Screen.End)
