@@ -26,8 +26,8 @@ namespace Space_Invaders
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private KeyboardState oldState;
-        Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle, keyboardRect, backRect, spaceRect;
-        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture, keyboardTexture, backTexture, spaceTexture, tieTexture;
+        Rectangle window, bgRect1, bgRect2, optionsRect, optionsRectTitle, keyboardRect, backRect, spaceRect, playRect;
+        Texture2D xwingTexture, bgTexture, laserTexture, optionsTexture, keyboardTexture, backTexture, spaceTexture, tieTexture, playTexture;
         XWing xwing;
         List<TieFighter> tieFighter;
         Vector2 bgSpeed;
@@ -49,6 +49,7 @@ namespace Space_Invaders
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            this.Window.Title = "Sam's Space Invaders";
             score = 0;
             lasers = new List<Laser>();
             tieFighter = new List<TieFighter>();
@@ -57,16 +58,17 @@ namespace Space_Invaders
             bgRect2 = new Rectangle(0, -900, 800, 900);
             optionsRect = new Rectangle(0, 50, 50, 50);
             keyboardRect = new Rectangle(300, 450, 200, 150);
-            spaceRect = new Rectangle(175, 50, 350, 75);
+            spaceRect = new Rectangle(250, 50, 350, 75);
             optionsRectTitle = new Rectangle(750, 850, 50, 50);
             backRect = new Rectangle(0, 0, 100, 50);
+            playRect = new Rectangle(700, 0, 100, 50);
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.ApplyChanges();
             bgSpeed = new Vector2(0, 4);
             base.Initialize();
             xwing = new XWing(xwingTexture, new Rectangle(350, 820, 100, 75), new Vector2(0, 0));
-            for (int i = 0; i <= 200; i++)
+            for (int i = 0; i <= 100; i++)
             {
                 tieFighter.Add(new TieFighter(tieTexture, new Rectangle(generator.Next(10, 750), generator.Next(-3500, -100), 50, 75), new Vector2(0, 0)));
             }
@@ -93,6 +95,7 @@ namespace Space_Invaders
             optionsTexture = Content.Load<Texture2D>("optionsTab");
             backTexture = Content.Load<Texture2D>("backButton");
             spaceTexture = Content.Load<Texture2D>("SpaceBar");
+            playTexture = Content.Load<Texture2D>("playButton");
 
             laserSound = Content.Load<SoundEffect>("laser");
             saberHover = Content.Load<SoundEffect>("lightsaber");
@@ -188,14 +191,17 @@ namespace Space_Invaders
                         screen = Screen.End;
                     }
                 }
-                for (int i = 1; i < (tieFighter.Count); i++)
+                for (int i = 0; i < (tieFighter.Count); i++)
                 {
                     for (int j = 0; j < (lasers.Count); j++)
                     {
                         if (tieFighter[i].Collide(lasers[j].Rectangle))
                         {
                             tieFighter.RemoveAt(i);
+
                             i--;
+
+                            
                             lasers.RemoveAt(j);
                             j--;
                             score += 250;
@@ -225,11 +231,11 @@ namespace Space_Invaders
                 battleThemeInstance.Stop();
                 introThemeInstance.Stop();
                 forceThemeInstance.Play();
-                if (backRect.Contains(mouseState.Position) || keyboardRect.Contains(mouseState.Position) || spaceRect.Contains(mouseState.Position))
+                if (backRect.Contains(mouseState.Position) || keyboardRect.Contains(mouseState.Position) || spaceRect.Contains(mouseState.Position) || playRect.Contains(mouseState.Position))
                 {
                     saberHoverInstance.Play();
                 }
-                else if (!backRect.Contains(mouseState.Position) || !keyboardRect.Contains(mouseState.Position) || !spaceRect.Contains(mouseState.Position))
+                else if (!backRect.Contains(mouseState.Position) || !keyboardRect.Contains(mouseState.Position) || !spaceRect.Contains(mouseState.Position) || !playRect.Contains(mouseState.Position))
                 {
                     saberHoverInstance.Stop();
                 }
@@ -246,6 +252,10 @@ namespace Space_Invaders
                     else if (backRect.Contains(mouseState.Position))
                     {
                         screen = Screen.Intro;
+                    }
+                    else if (playRect.Contains(mouseState.Position))
+                    {
+                        screen = Screen.Main;
                     }
                     else
                     {
@@ -302,12 +312,17 @@ namespace Space_Invaders
                 }
                 if (spaceRect.Contains(mouseState.Position))
                 {
-                    _spriteBatch.Draw(spaceTexture, new Rectangle(165, 40, 370, 95), Color.LightCyan);
+                    _spriteBatch.Draw(spaceTexture, new Rectangle(240, 40, 370, 95), Color.LightCyan);
 
                 }
                 if (backRect.Contains(mouseState.Position))
                 {
                     _spriteBatch.Draw(backTexture, new Rectangle(-10, -10, 120, 70), Color.LightBlue);
+
+                }
+                if (playRect.Contains(mouseState.Position))
+                {
+                    _spriteBatch.Draw(playTexture, new Rectangle(690, -10, 120, 70), Color.LightBlue);
 
                 }
 
@@ -320,11 +335,12 @@ namespace Space_Invaders
                 }
                 if (clickedSpace == true)
                 {
-
+                    _spriteBatch.DrawString(smallTextFont, "Press to Shoot", new Vector2(220, 130), Color.White);
                 }
                 _spriteBatch.Draw(backTexture, backRect, Color.White);
                 _spriteBatch.Draw(keyboardTexture, keyboardRect, Color.White);
                 _spriteBatch.Draw(spaceTexture, spaceRect, Color.White);
+                _spriteBatch.Draw(playTexture, playRect, Color.White);
             }
 
             if (screen == Screen.Main)
@@ -343,6 +359,12 @@ namespace Space_Invaders
                 }
                 xwing.Draw(_spriteBatch);
                 _spriteBatch.Draw(optionsTexture, optionsRect, Color.White);
+                if (score >= 25250)
+                {
+                    _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(64, 154), Color.DarkGoldenrod);
+                    _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(50, 140), Color.White);
+                    _spriteBatch.DrawString(largeTextFont, "GAME", new Vector2(57, 147), Color.Yellow);
+                }
             }
             if (screen == Screen.End)
             {
