@@ -55,7 +55,7 @@ namespace Space_Invaders
         {
             _rectangle.Offset(_speed);
 
-            _speed.Y = 1;
+            _speed.Y = 2;
 
         }
 
